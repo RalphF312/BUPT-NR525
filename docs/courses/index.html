@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>课程检索 | BUPT-NR525</title>
-  <meta name="description" content="BUPT-NR525 课程检索页，支持按课程名、教师与资料标签搜索。" />
+  <title>查看所有课程 | BUPT-NR525</title>
+  <meta name="description" content="BUPT-NR525 课程检索页，支持全局搜索与标签筛选。" />
   <link rel="stylesheet" href="../assets/css/style.css" />
 </head>
 <body>
@@ -24,10 +24,11 @@
     <section class="hero">
       <div class="container">
         <a class="back-link" href="../index.html">← 返回首页</a>
-        <h2 class="page-title">课程检索</h2>
-        <p class="intro">支持搜索课程名、教师、培养类型或资料标签。</p>
-        <div class="search-panel">
-          <form class="search-form search-form-full" action="/courses" method="get" role="search">
+        <h2 class="page-title">查看所有课程</h2>
+        <p class="intro">支持全局搜索和标签筛选，快速定位符合条件的课程。</p>
+
+        <div class="search-panel search-stack">
+          <form class="search-form search-form-full" action="/courses" method="get" role="search" id="search-form">
             <span class="search-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none">
                 <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"></circle>
@@ -42,6 +43,21 @@
               aria-label="搜索课程名、教师或资料"
             />
           </form>
+
+          <div class="filter-card" id="filter-panel">
+            <div class="filter-row">
+              <p class="filter-label">培养类型</p>
+              <div class="chip-group" id="program-filter"></div>
+            </div>
+            <div class="filter-row">
+              <p class="filter-label">资料类型</p>
+              <div class="chip-group" id="resource-filter"></div>
+            </div>
+            <div class="filter-actions">
+              <button type="button" class="btn btn-secondary" id="reset-filters">清空筛选</button>
+            </div>
+          </div>
+
           <p class="section-desc" id="search-summary"></p>
         </div>
       </div>
@@ -52,7 +68,7 @@
         <div class="courses-grid" id="courses-results"></div>
         <div class="card empty-state" id="empty-state" hidden>
           <h3 class="section-title">没有找到匹配课程</h3>
-          <p class="section-desc">可以尝试更短关键词，或换成教师姓名/资料类型。</p>
+          <p class="section-desc">可以尝试更短关键词，或更换筛选标签组合。</p>
         </div>
       </div>
     </section>
@@ -68,11 +84,65 @@
     const summaryEl = document.getElementById("search-summary");
     const resultsEl = document.getElementById("courses-results");
     const emptyEl = document.getElementById("empty-state");
+    const programFilterEl = document.getElementById("program-filter");
+    const resourceFilterEl = document.getElementById("resource-filter");
+    const resetFiltersBtn = document.getElementById("reset-filters");
 
     const params = new URLSearchParams(window.location.search);
-    const keyword = (params.get("q") || "").trim();
-    inputEl.value = keyword;
-    const normalizedKeyword = keyword.toLowerCase();
+    const initialKeyword = (params.get("q") || "").trim();
+    inputEl.value = initialKeyword;
+
+    const allCourses = [...(window.coursesList || [])].sort(
+      (a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated)
+    );
+
+    const state = {
+      keyword: initialKeyword,
+      selectedPrograms: new Set(),
+      selectedResources: new Set()
+    };
+
+    function uniq(items) {
+      return [...new Set(items.filter(Boolean))];
+    }
+
+    function collectOptions(field) {
+      return uniq(allCourses.flatMap((course) => course[field] || []));
+    }
+
+    function createChip(label, groupKey, host) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "filter-chip";
+      btn.textContent = label;
+
+      btn.addEventListener("click", () => {
+        const set = state[groupKey];
+        if (set.has(label)) {
+          set.delete(label);
+        } else {
+          set.add(label);
+        }
+        render();
+      });
+
+      host.appendChild(btn);
+    }
+
+    function updateChipStates() {
+      const chipGroups = [
+        { host: programFilterEl, set: state.selectedPrograms },
+        { host: resourceFilterEl, set: state.selectedResources }
+      ];
+
+      chipGroups.forEach(({ host, set }) => {
+        [...host.querySelectorAll(".filter-chip")].forEach((chip) => {
+          const active = set.has(chip.textContent);
+          chip.classList.toggle("is-active", active);
+          chip.setAttribute("aria-pressed", String(active));
+        });
+      });
+    }
 
     function toSearchText(course) {
       return [
@@ -84,6 +154,15 @@
       ]
         .join(" ")
         .toLowerCase();
+    }
+
+    function matchesSelectedTags(course, selectedSet, field) {
+      if (!selectedSet.size) return true;
+      const values = new Set(course[field] || []);
+      for (const selected of selectedSet) {
+        if (values.has(selected)) return true;
+      }
+      return false;
     }
 
     function renderCourseCard(course) {
@@ -110,19 +189,62 @@
       `;
     }
 
-    const filtered = [...window.coursesList]
-      .filter((course) => (normalizedKeyword ? toSearchText(course).includes(normalizedKeyword) : true))
-      .sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
+    function getFilteredCourses() {
+      const normalizedKeyword = state.keyword.toLowerCase();
 
-    summaryEl.textContent = keyword
-      ? `关键词“${keyword}”共匹配 ${filtered.length} 门课程。`
-      : `当前共收录 ${window.coursesList.length} 门课程，按最近更新时间排序。`;
-
-    if (!filtered.length) {
-      emptyEl.hidden = false;
+      return allCourses.filter((course) => {
+        const keywordPass = normalizedKeyword ? toSearchText(course).includes(normalizedKeyword) : true;
+        const programPass = matchesSelectedTags(course, state.selectedPrograms, "programs");
+        const resourcePass = matchesSelectedTags(course, state.selectedResources, "resources");
+        return keywordPass && programPass && resourcePass;
+      });
     }
 
-    resultsEl.innerHTML = filtered.map(renderCourseCard).join("");
+    function updateSummary(filteredCount) {
+      const parts = [];
+      if (state.keyword) parts.push(`关键词“${state.keyword}”`);
+      if (state.selectedPrograms.size) parts.push(`培养类型: ${[...state.selectedPrograms].join("/")}`);
+      if (state.selectedResources.size) parts.push(`资料类型: ${[...state.selectedResources].join("/")}`);
+
+      summaryEl.textContent = parts.length
+        ? `${parts.join(" | ")}，共匹配 ${filteredCount} 门课程。`
+        : `当前共收录 ${allCourses.length} 门课程，按最近更新时间排序。`;
+    }
+
+    function syncQueryString() {
+      const next = new URLSearchParams(window.location.search);
+      if (state.keyword) next.set("q", state.keyword);
+      else next.delete("q");
+      const nextUrl = `${window.location.pathname}${next.toString() ? `?${next.toString()}` : ""}`;
+      window.history.replaceState({}, "", nextUrl);
+    }
+
+    function render() {
+      updateChipStates();
+      const filtered = getFilteredCourses();
+      updateSummary(filtered.length);
+      emptyEl.hidden = filtered.length > 0;
+      resultsEl.innerHTML = filtered.map(renderCourseCard).join("");
+      syncQueryString();
+    }
+
+    collectOptions("programs").forEach((label) => createChip(label, "selectedPrograms", programFilterEl));
+    collectOptions("resources").forEach((label) => createChip(label, "selectedResources", resourceFilterEl));
+
+    inputEl.addEventListener("input", (event) => {
+      state.keyword = event.target.value.trim();
+      render();
+    });
+
+    resetFiltersBtn.addEventListener("click", () => {
+      state.keyword = "";
+      state.selectedPrograms.clear();
+      state.selectedResources.clear();
+      inputEl.value = "";
+      render();
+    });
+
+    render();
   </script>
 </body>
 </html>

@@ -192,6 +192,61 @@ h1.brand-title {
   margin-top: 24px;
 }
 
+.search-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.filter-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  padding: 16px;
+}
+
+.filter-row + .filter-row {
+  margin-top: 14px;
+}
+
+.filter-label {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: #374151;
+  padding: 7px 12px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-chip:hover {
+  border-color: #9ca3af;
+}
+
+.filter-chip.is-active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
+.filter-actions {
+  margin-top: 14px;
+}
+
 .empty-state {
   margin-top: 18px;
 }
