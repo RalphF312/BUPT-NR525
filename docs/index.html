@@ -26,9 +26,7 @@
         <div>
           <span class="badge">Course Archive</span>
           <h2>课程资料导航</h2>
-          <p>
-            点击下方课程卡片，进入对应课程主页查看作业、期末卷、复习笔记与参考资料。
-          </p>
+          <p>点击下方课程卡片，查看课程适用方向、授课老师与资料类型。</p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="/courses">查看所有课程</a>
             <form class="search-form" action="/courses" method="get" role="search">
@@ -68,30 +66,35 @@
 
   <script src="./assets/js/courses-data.js"></script>
   <script>
+    function renderCourseCard(course) {
+      const tags = [
+        ...(course.programs || []),
+        ...((course.teachers || []).map((teacher) => `教师: ${teacher}`)),
+        ...(course.resources || [])
+      ];
+
+      return `
+        <article class="course-card">
+          <div class="course-top">
+            <div>
+              <h5 class="course-title">${course.name}</h5>
+              <p class="course-meta">最近更新：${course.lastUpdated}</p>
+            </div>
+            <span class="tag tag-soft">${(course.programs || []).join("/") || "未标注"}</span>
+          </div>
+          <div class="tags">
+            ${tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
+          </div>
+        </article>
+      `;
+    }
+
     const recentCourses = [...window.coursesList]
       .sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated))
       .slice(0, 6);
 
     const recentContainer = document.getElementById("recent-courses");
-
-    recentContainer.innerHTML = recentCourses
-      .map(
-        (course) => `
-      <a class="course-card" href="./courses/${course.slug}/index.html">
-        <div class="course-top">
-          <div>
-            <h5 class="course-title">${course.name}</h5>
-            <p class="course-meta">课程主页：${course.slug} · 任课教师：${course.teacher}</p>
-          </div>
-          <span class="tag tag-soft">${course.level}</span>
-        </div>
-        <div class="tags">
-          ${course.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
-        </div>
-      </a>
-    `
-      )
-      .join("");
+    recentContainer.innerHTML = recentCourses.map(renderCourseCard).join("");
   </script>
 </body>
 </html>

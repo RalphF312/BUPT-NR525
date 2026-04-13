@@ -25,7 +25,7 @@
       <div class="container">
         <a class="back-link" href="../index.html">← 返回首页</a>
         <h2 class="page-title">课程检索</h2>
-        <p class="intro">支持搜索课程名、教师或资料标签，快速定位到课程主页。</p>
+        <p class="intro">支持搜索课程名、教师、培养类型或资料标签。</p>
         <div class="search-panel">
           <form class="search-form search-form-full" action="/courses" method="get" role="search">
             <span class="search-icon" aria-hidden="true">
@@ -52,7 +52,7 @@
         <div class="courses-grid" id="courses-results"></div>
         <div class="card empty-state" id="empty-state" hidden>
           <h3 class="section-title">没有找到匹配课程</h3>
-          <p class="section-desc">可以尝试更短的关键词，或改搜教师姓名、标签名称。</p>
+          <p class="section-desc">可以尝试更短关键词，或换成教师姓名/资料类型。</p>
         </div>
       </div>
     </section>
@@ -72,25 +72,46 @@
     const params = new URLSearchParams(window.location.search);
     const keyword = (params.get("q") || "").trim();
     inputEl.value = keyword;
-
     const normalizedKeyword = keyword.toLowerCase();
 
+    function toSearchText(course) {
+      return [
+        course.name,
+        ...(course.aliases || []),
+        ...(course.teachers || []),
+        ...(course.programs || []),
+        ...(course.resources || [])
+      ]
+        .join(" ")
+        .toLowerCase();
+    }
+
+    function renderCourseCard(course) {
+      const tags = [
+        ...(course.programs || []),
+        ...((course.teachers || []).map((teacher) => `教师: ${teacher}`)),
+        ...(course.resources || []),
+        `更新: ${course.lastUpdated}`
+      ];
+
+      return `
+        <article class="course-card">
+          <div class="course-top">
+            <div>
+              <h5 class="course-title">${course.name}</h5>
+              <p class="course-meta">授课教师：${(course.teachers || []).join(" / ") || "待补充"}</p>
+            </div>
+            <span class="tag tag-soft">${(course.programs || []).join("/") || "未标注"}</span>
+          </div>
+          <div class="tags">
+            ${tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
+          </div>
+        </article>
+      `;
+    }
+
     const filtered = [...window.coursesList]
-      .filter((course) => {
-        if (!normalizedKeyword) return true;
-
-        const haystack = [
-          course.name,
-          course.slug,
-          course.teacher,
-          course.level,
-          ...course.tags
-        ]
-          .join(" ")
-          .toLowerCase();
-
-        return haystack.includes(normalizedKeyword);
-      })
+      .filter((course) => (normalizedKeyword ? toSearchText(course).includes(normalizedKeyword) : true))
       .sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
 
     summaryEl.textContent = keyword
@@ -101,25 +122,7 @@
       emptyEl.hidden = false;
     }
 
-    resultsEl.innerHTML = filtered
-      .map(
-        (course) => `
-      <a class="course-card" href="./${course.slug}/index.html">
-        <div class="course-top">
-          <div>
-            <h5 class="course-title">${course.name}</h5>
-            <p class="course-meta">课程主页：${course.slug} · 任课教师：${course.teacher}</p>
-          </div>
-          <span class="tag tag-soft">${course.level}</span>
-        </div>
-        <div class="tags">
-          ${course.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
-          <span class="tag">更新：${course.lastUpdated}</span>
-        </div>
-      </a>
-    `
-      )
-      .join("");
+    resultsEl.innerHTML = filtered.map(renderCourseCard).join("");
   </script>
 </body>
 </html>
