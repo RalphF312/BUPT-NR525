@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>课程检索 | BUPT-NR525</title>
+  <meta name="description" content="BUPT-NR525 课程检索页，支持按课程名、教师与资料标签搜索。" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <h1 class="brand-title">BUPT-NR525</h1>
+        <p class="brand-subtitle">课程检索中心</p>
+      </div>
+      <nav class="nav">
+        <a href="../index.html">首页</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <a class="back-link" href="../index.html">← 返回首页</a>
+        <h2 class="page-title">课程检索</h2>
+        <p class="intro">支持搜索课程名、教师或资料标签，快速定位到课程主页。</p>
+        <div class="search-panel">
+          <form class="search-form search-form-full" action="/courses" method="get" role="search">
+            <span class="search-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"></circle>
+                <path d="M16 16L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+              </svg>
+            </span>
+            <input
+              type="search"
+              name="q"
+              id="search-input"
+              placeholder="搜索课程名、教师或资料..."
+              aria-label="搜索课程名、教师或资料"
+            />
+          </form>
+          <p class="section-desc" id="search-summary"></p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="courses-grid" id="courses-results"></div>
+        <div class="card empty-state" id="empty-state" hidden>
+          <h3 class="section-title">没有找到匹配课程</h3>
+          <p class="section-desc">可以尝试更短的关键词，或改搜教师姓名、标签名称。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© 2026 BUPT-NR525</div>
+  </footer>
+
+  <script src="../assets/js/courses-data.js"></script>
+  <script>
+    const inputEl = document.getElementById("search-input");
+    const summaryEl = document.getElementById("search-summary");
+    const resultsEl = document.getElementById("courses-results");
+    const emptyEl = document.getElementById("empty-state");
+
+    const params = new URLSearchParams(window.location.search);
+    const keyword = (params.get("q") || "").trim();
+    inputEl.value = keyword;
+
+    const normalizedKeyword = keyword.toLowerCase();
+
+    const filtered = [...window.coursesList]
+      .filter((course) => {
+        if (!normalizedKeyword) return true;
+
+        const haystack = [
+          course.name,
+          course.slug,
+          course.teacher,
+          course.level,
+          ...course.tags
+        ]
+          .join(" ")
+          .toLowerCase();
+
+        return haystack.includes(normalizedKeyword);
+      })
+      .sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
+
+    summaryEl.textContent = keyword
+      ? `关键词“${keyword}”共匹配 ${filtered.length} 门课程。`
+      : `当前共收录 ${window.coursesList.length} 门课程，按最近更新时间排序。`;
+
+    if (!filtered.length) {
+      emptyEl.hidden = false;
+    }
+
+    resultsEl.innerHTML = filtered
+      .map(
+        (course) => `
+      <a class="course-card" href="./${course.slug}/index.html">
+        <div class="course-top">
+          <div>
+            <h5 class="course-title">${course.name}</h5>
+            <p class="course-meta">课程主页：${course.slug} · 任课教师：${course.teacher}</p>
+          </div>
+          <span class="tag tag-soft">${course.level}</span>
+        </div>
+        <div class="tags">
+          ${course.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
+          <span class="tag">更新：${course.lastUpdated}</span>
+        </div>
+      </a>
+    `
+      )
+      .join("");
+  </script>
+</body>
+</html>

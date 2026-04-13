@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BUPT-NR525 | 实验室课程资料站</title>
-  <meta name="description" content="BUPT-NR525，北京邮电大学实验室课程资料站。" />
+  <title>BUPT-NR525 | 实验室内部课程资料站</title>
+  <meta name="description" content="BUPT-NR525，北京邮电大学实验室内部课程资料站。" />
   <link rel="stylesheet" href="./assets/css/style.css" />
 </head>
 <body>
@@ -12,10 +12,10 @@
     <div class="container header-inner">
       <div class="brand">
         <h1 class="brand-title">BUPT-NR525</h1>
-        <p class="brand-subtitle">北京邮电大学 · 实验室课程资料站</p>
+        <p class="brand-subtitle">北京邮电大学 · NR525实验室内部课程资料站</p>
       </div>
       <nav class="nav">
-        <a href="#courses">所有课程</a>
+        <a href="/courses">所有课程</a>
       </nav>
     </div>
   </header>
@@ -30,7 +30,21 @@
             点击下方课程卡片，进入对应课程主页查看作业、期末卷、复习笔记与参考资料。
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#courses">查看所有课程</a>
+            <a class="btn btn-primary" href="/courses">查看所有课程</a>
+            <form class="search-form" action="/courses" method="get" role="search">
+              <span class="search-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"></circle>
+                  <path d="M16 16L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                </svg>
+              </span>
+              <input
+                type="search"
+                name="q"
+                placeholder="搜索课程名、教师或资料..."
+                aria-label="搜索课程名、教师或资料"
+              />
+            </form>
           </div>
         </div>
       </div>
@@ -39,75 +53,11 @@
     <section id="courses">
       <div class="container">
         <div class="section-heading">
-          <h3>所有课程</h3>
-          <p>点击课程卡片可进入对应课程主页。</p>
+          <h3>最近更新 (Recently Updated)</h3>
+          <p>展示近期上传了新作业、笔记或期末卷的活跃课程。</p>
         </div>
 
-        <div class="courses-grid">
-          <a class="course-card" href="./courses/graph-theory/index.html">
-            <div class="course-top">
-              <div>
-                <h5 class="course-title">图论</h5>
-                <p class="course-meta">课程主页：graph-theory</p>
-              </div>
-              <span class="tag tag-soft">学硕</span>
-            </div>
-            <div class="tags">
-              <span class="tag">作业</span>
-              <span class="tag">期末卷</span>
-              <span class="tag">复习笔记</span>
-              <span class="tag">参考资料</span>
-            </div>
-          </a>
-
-          <a class="course-card" href="./courses/matrix-analysis/index.html">
-            <div class="course-top">
-              <div>
-                <h5 class="course-title">矩阵分析</h5>
-                <p class="course-meta">课程主页：matrix-analysis</p>
-              </div>
-              <span class="tag tag-soft">学硕</span>
-            </div>
-            <div class="tags">
-              <span class="tag">作业</span>
-              <span class="tag">往年题</span>
-              <span class="tag">笔记</span>
-              <span class="tag">参考书目</span>
-            </div>
-          </a>
-
-          <a class="course-card" href="./courses/advanced-computer-network/index.html">
-            <div class="course-top">
-              <div>
-                <h5 class="course-title">高级计算机网络</h5>
-                <p class="course-meta">课程主页：advanced-computer-network</p>
-              </div>
-              <span class="tag tag-soft">专硕</span>
-            </div>
-            <div class="tags">
-              <span class="tag">作业</span>
-              <span class="tag">期末卷</span>
-              <span class="tag">复习提纲</span>
-              <span class="tag">课件资料</span>
-            </div>
-          </a>
-
-          <a class="course-card" href="./courses/network-security/index.html">
-            <div class="course-top">
-              <div>
-                <h5 class="course-title">网络安全专题</h5>
-                <p class="course-meta">课程主页：network-security</p>
-              </div>
-              <span class="tag tag-soft">专硕</span>
-            </div>
-            <div class="tags">
-              <span class="tag">课程作业</span>
-              <span class="tag">展示材料</span>
-              <span class="tag">往年题</span>
-              <span class="tag">参考论文</span>
-            </div>
-          </a>
-        </div>
+        <div class="courses-grid" id="recent-courses"></div>
       </div>
     </section>
   </main>
@@ -115,5 +65,33 @@
   <footer class="footer">
     <div class="container">© 2026 BUPT-NR525</div>
   </footer>
+
+  <script src="./assets/js/courses-data.js"></script>
+  <script>
+    const recentCourses = [...window.coursesList]
+      .sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated))
+      .slice(0, 6);
+
+    const recentContainer = document.getElementById("recent-courses");
+
+    recentContainer.innerHTML = recentCourses
+      .map(
+        (course) => `
+      <a class="course-card" href="./courses/${course.slug}/index.html">
+        <div class="course-top">
+          <div>
+            <h5 class="course-title">${course.name}</h5>
+            <p class="course-meta">课程主页：${course.slug} · 任课教师：${course.teacher}</p>
+          </div>
+          <span class="tag tag-soft">${course.level}</span>
+        </div>
+        <div class="tags">
+          ${course.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
+        </div>
+      </a>
+    `
+      )
+      .join("");
+  </script>
 </body>
 </html>
