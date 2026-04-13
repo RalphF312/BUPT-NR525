@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BUPT-NR525 | 实验室课程资料站</title>
-  <meta name="description" content="BUPT-NR525，北京邮电大学实验室课程资料归档站，收录研一课程作业、期末卷、复习笔记与参考资料。" />
+  <meta name="description" content="BUPT-NR525，北京邮电大学实验室课程资料站。" />
   <link rel="stylesheet" href="./assets/css/style.css" />
 </head>
 <body>
@@ -15,10 +15,7 @@
         <p class="brand-subtitle">北京邮电大学 · 实验室课程资料站</p>
       </div>
       <nav class="nav">
-        <a href="#about">关于本站</a>
-        <a href="#courses">课程资料</a>
-        <a href="#repo">仓库结构</a>
-        <a href="#contribute">贡献方式</a>
+        <a href="#courses">所有课程</a>
       </nav>
     </div>
   </header>
@@ -27,27 +24,13 @@
     <section class="hero">
       <div class="container hero-grid">
         <div>
-          <span class="badge">Lab Archive · Course Materials</span>
-          <h2>把研一课程资料，整理成一个长期可维护的网站。</h2>
+          <span class="badge">Course Archive</span>
+          <h2>课程资料导航</h2>
           <p>
-            BUPT-NR525 用于集中整理实验室课程相关资料，包括作业、期末卷、复习笔记与参考资料。
+            点击下方课程卡片，进入对应课程主页查看作业、期末卷、复习笔记与参考资料。
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#courses">查看课程</a>
-            <a class="btn btn-secondary" href="#contribute">查看说明</a>
-          </div>
-          
-        </div>
-
-        </div>
-    </section>
-
-    <section id="about">
-      <div class="container">
-        <div class="section-card">
-          <div class="section-heading">
-            <h3>关于本站</h3>
-            <p>BUPT-NR525 用于整理实验室课程资料，集中收录作业、期末卷、复习笔记与参考资料。</p>
+            <a class="btn btn-primary" href="#courses">查看所有课程</a>
           </div>
         </div>
       </div>
@@ -56,16 +39,16 @@
     <section id="courses">
       <div class="container">
         <div class="section-heading">
-          <h3>课程资料目录</h3>
-          <p>按课程直接组织页面与资料目录，不再按研一上、研一下分组。</p>
+          <h3>所有课程</h3>
+          <p>点击课程卡片可进入对应课程主页。</p>
         </div>
 
         <div class="courses-grid">
-          <article class="course-card">
+          <a class="course-card" href="./courses/graph-theory/index.html">
             <div class="course-top">
               <div>
                 <h5 class="course-title">图论</h5>
-                <p class="course-meta">课程页面路径：<code>docs/courses/graph-theory/</code></p>
+                <p class="course-meta">课程主页：graph-theory</p>
               </div>
               <span class="tag tag-soft">学硕</span>
             </div>
@@ -75,13 +58,13 @@
               <span class="tag">复习笔记</span>
               <span class="tag">参考资料</span>
             </div>
-          </article>
+          </a>
 
-          <article class="course-card">
+          <a class="course-card" href="./courses/matrix-analysis/index.html">
             <div class="course-top">
               <div>
                 <h5 class="course-title">矩阵分析</h5>
-                <p class="course-meta">课程页面路径：<code>docs/courses/matrix-analysis/</code></p>
+                <p class="course-meta">课程主页：matrix-analysis</p>
               </div>
               <span class="tag tag-soft">学硕</span>
             </div>
@@ -91,13 +74,13 @@
               <span class="tag">笔记</span>
               <span class="tag">参考书目</span>
             </div>
-          </article>
+          </a>
 
-          <article class="course-card">
+          <a class="course-card" href="./courses/advanced-computer-network/index.html">
             <div class="course-top">
               <div>
                 <h5 class="course-title">高级计算机网络</h5>
-                <p class="course-meta">课程页面路径：<code>docs/courses/advanced-computer-network/</code></p>
+                <p class="course-meta">课程主页：advanced-computer-network</p>
               </div>
               <span class="tag tag-soft">专硕</span>
             </div>
@@ -107,13 +90,13 @@
               <span class="tag">复习提纲</span>
               <span class="tag">课件资料</span>
             </div>
-          </article>
+          </a>
 
-          <article class="course-card">
+          <a class="course-card" href="./courses/network-security/index.html">
             <div class="course-top">
               <div>
                 <h5 class="course-title">网络安全专题</h5>
-                <p class="course-meta">课程页面路径：<code>docs/courses/network-security/</code></p>
+                <p class="course-meta">课程主页：network-security</p>
               </div>
               <span class="tag tag-soft">专硕</span>
             </div>
@@ -123,25 +106,14 @@
               <span class="tag">往年题</span>
               <span class="tag">参考论文</span>
             </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="contribute">
-      <div class="container">
-        <div class="section-card">
-          <div class="section-heading">
-            <h3>说明</h3>
-            <p>资料持续更新中，后续会逐步补充更多课程页面与文件链接。</p>
-          </div>
+          </a>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <div class="container">© 2026 BUPT-NR525 · Maintained by NR525 Lab</div>
+    <div class="container">© 2026 BUPT-NR525</div>
   </footer>
 </body>
 </html>
