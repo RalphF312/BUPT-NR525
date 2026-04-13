@@ -383,39 +383,16 @@
           <span class="badge">Lab Archive · Course Materials</span>
           <h2>把研一课程资料，整理成一个长期可维护的网站。</h2>
           <p>
-            BUPT-NR525 用于集中整理实验室课程相关资料，包括作业、期末卷、复习笔记、参考资料等。
-            当前版本为静态网站，适合直接部署到 GitHub Pages，后续可逐步扩充课程页面与资料下载链接。
+            BUPT-NR525 用于集中整理实验室课程相关资料，包括作业、期末卷、复习笔记与参考资料。
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#courses">查看课程结构</a>
-            <a class="btn btn-secondary" href="#repo">查看仓库组织</a>
+            <a class="btn btn-primary" href="#courses">查看课程</a>
+            <a class="btn btn-secondary" href="#contribute">查看说明</a>
           </div>
-          <div class="notice">
-            建议第一版先把页面和目录结构搭起来，再逐门课程补文件。这样最容易尽快上线。
-          </div>
+          
         </div>
 
-        <div class="summary-card">
-          <div class="summary-grid">
-            <div class="stat-card">
-              <div class="stat-label">站点名称</div>
-              <div class="stat-value">BUPT-NR525</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">部署方式</div>
-              <div class="stat-value">GitHub Pages</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">适用场景</div>
-              <div class="stat-value">课程资料归档</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">当前版本</div>
-              <div class="stat-value">单文件静态页</div>
-            </div>
-          </div>
         </div>
-      </div>
     </section>
 
     <section id="about">
@@ -423,12 +400,8 @@
         <div class="section-card">
           <div class="section-heading">
             <h3>关于本站</h3>
-            <p>网站采用“课程 → 资料类型”的结构，更适合直接维护课程页面，并通过标签区分专硕、学硕等属性。</p>
+            <p>BUPT-NR525 用于整理实验室课程资料，集中收录作业、期末卷、复习笔记与参考资料。</p>
           </div>
-          <p>
-            你可以把它理解成一个实验室内部的课程资料导航站。第一版不追求复杂后台，重点是：页面清晰、目录规范、后续好维护。
-            只要仓库里有 HTML 文件和资料目录，就可以持续往里补内容。
-          </p>
         </div>
       </div>
     </section>
@@ -508,101 +481,12 @@
       </div>
     </section>
 
-    <section id="repo">
-      <div class="container">
-        <div class="section-heading">
-          <h3>推荐仓库结构</h3>
-          <p>这是最适合 GitHub Pages 的简洁结构，先够用，后面再扩展。</p>
-        </div>
-
-        <div class="repo-grid">
-          <div class="repo-card">
-            <h4>方案一：最简单</h4>
-            <p>适合马上上线。把 <code>index.html</code> 放在仓库根目录。</p>
-            <pre>BUPT-NR525/
-├─ docs/
-│  ├─ index.html
-│  └─ courses/
-│     ├─ graph-theory/
-│     │  └─ index.html
-│     ├─ matrix-analysis/
-│     │  └─ index.html
-│     ├─ advanced-computer-network/
-│     │  └─ index.html
-│     └─ network-security/
-│        └─ index.html
-├─ materials/
-│  ├─ 图论/
-│  ├─ 矩阵分析/
-│  ├─ 高级计算机网络/
-│  └─ 网络安全专题/
-└─ README.md</pre>
-          </div>
-
-          <div class="repo-card">
-            <h4>方案二：更规范</h4>
-            <p>适合后面内容变多。把网页放在 <code>/docs</code> 目录。</p>
-            <pre>BUPT-NR525/
-├─ docs/
-│  ├─ index.html
-│  └─ courses/
-│     ├─ graph-theory/
-│     │  └─ index.html
-│     ├─ matrix-analysis/
-│     │  └─ index.html
-│     ├─ advanced-computer-network/
-│     │  └─ index.html
-│     └─ network-security/
-│        └─ index.html
-├─ materials/
-│  ├─ 图论/
-│  ├─ 矩阵分析/
-│  ├─ 高级计算机网络/
-│  └─ 网络安全专题/
-└─ README.md</pre>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <section id="contribute">
       <div class="container">
-        <div class="section-heading">
-          <h3>贡献方式</h3>
-          <p>为了避免后面越来越乱，建议从一开始就统一目录和命名。</p>
-        </div>
-
-        <div class="steps-grid">
-          <div class="step-card">
-            <div class="step-number">1</div>
-            <div>
-              <strong>按学期和课程建目录</strong>
-              <p>例如：<code>materials/研一上/高级计算机网络/</code></p>
-            </div>
-          </div>
-
-          <div class="step-card">
-            <div class="step-number">2</div>
-            <div>
-              <strong>细分资料类型</strong>
-              <p>例如：作业、期末卷、复习笔记、参考资料。</p>
-            </div>
-          </div>
-
-          <div class="step-card">
-            <div class="step-number">3</div>
-            <div>
-              <strong>统一文件命名</strong>
-              <p>例如：<code>2025-高级计算机网络-期末卷A.pdf</code></p>
-            </div>
-          </div>
-
-          <div class="step-card">
-            <div class="step-number">4</div>
-            <div>
-              <strong>先补高价值资料</strong>
-              <p>优先上传作业、卷子、笔记和课程总结，最容易提高站点价值。</p>
-            </div>
+        <div class="section-card">
+          <div class="section-heading">
+            <h3>说明</h3>
+            <p>资料持续更新中，后续会逐步补充更多课程页面与文件链接。</p>
           </div>
         </div>
       </div>
